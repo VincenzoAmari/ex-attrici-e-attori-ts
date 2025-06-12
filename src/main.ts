@@ -72,7 +72,7 @@ async function getAllActress(): Promise<Actress[]> {
         }
         const dati = await response.json();
         if(!(dati instanceof Array)){
-            throw new Error ("non è uin array")
+            throw new Error ("non è uin array");
         }
         const validActress = dati.filter(isActress);
         return validActress;
@@ -85,5 +85,16 @@ async function getAllActress(): Promise<Actress[]> {
             console.error("errore sconosciuto", error);
         }
         return []; 
+    }
+}
+
+async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
+    try {
+        const promises = ids.map(id => getActress(id));
+        const actresses = await Promise.all(promises);
+        return actresses;
+    } catch (error) {
+        console.error("errore durante il recupero delle attrici", error);
+        return [];
     }
 }
