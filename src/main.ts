@@ -30,28 +30,18 @@ type Actress = Person & {
 function isActress(dati: unknown): dati is Actress{
     return(
         typeof dati === "object" &&dati !== null &&
-
         "id" in dati && typeof dati.id === "number" &&
-
         "name" in dati && typeof dati.name ==="string" &&
-
         "birth_year" in dati && typeof dati.birth_year ==="number" &&
-
         "death_year" in dati && typeof dati.death_year ==="number" &&
-
         "biography" in dati && typeof dati.biography ==="string" &&
-
         "imge" in dati && typeof dati.imge ==="string" &&
-
         "most_famous_movies" in dati && 
         dati.most_famous_movies instanceof Array && 
         dati.most_famous_movies.length === 3 &&
         dati.most_famous_movies.every (m=> typeof m === "string")&&
-
         "awards" in dati && typeof dati.awards ==="string" &&
-
         "nationality" in dati && typeof dati.nationality ==="string" 
-
     )
 }
 
@@ -71,5 +61,29 @@ async function getActress(id:number): Promise <Actress | null> {
             console.error("errore sconosciuto", error);
         }
         return null; 
+    }
+}
+
+async function getAllActress(): Promise<Actress[]> {
+    try {
+        const response = await fetch(`http://localhost:3333/destinations`);
+        if(!response.ok){
+            throw new Error(`errore http ${response.status}: ${response.statusText}`);
+        }
+        const dati = await response.json();
+        if(!(dati instanceof Array)){
+            throw new Error ("non è uin array")
+        }
+        const validActress = dati.filter(isActress);
+        return validActress;
+        
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("errore durante il recupero delle attrici", error);
+
+        }else{
+            console.error("errore sconosciuto", error);
+        }
+        return []; 
     }
 }
